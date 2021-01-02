@@ -52,7 +52,7 @@ int  recvbuflen = DEFAULT_BUFLEN;
     while ( pDirEnt != NULL ) {
         printf( "%s\n", pDirEnt->d_name ,'\n');
         pDirEnt = readdir( pDIR );
-        rcnt = send(fd, pDirEnt, strlen(Welcomsge), 0);
+       
     }
 
     /* Release the open directory */
@@ -78,7 +78,7 @@ int  recvbuflen = DEFAULT_BUFLEN;
 
    rcnt = send(fd, Welcomsge, strlen(Welcomsge), 0);
    
-   read_dir();
+   read_dir(fd);
    
    
    
@@ -165,7 +165,7 @@ while(1) {
     if ((pid=fork()) == 0) {
         close(server);
         do_job(fd);
-        read_dir(fd);
+        
         printf("Child finished their job!\n");
         close(fd);
         exit(0);
