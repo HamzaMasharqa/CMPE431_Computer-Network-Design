@@ -24,13 +24,9 @@
 
 
 
-//void seCurity(int username, int password){}
+///void seCurity()
 
-void read_dir(int fd){
-int length,rcnt;
-char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
-int  recvbuflen = DEFAULT_BUFLEN;
-
+void read_dir(){
 
  DIR *pDIR;
  
@@ -38,7 +34,7 @@ int  recvbuflen = DEFAULT_BUFLEN;
 
     /* Open the current directory */
 
-    pDIR = opendir("HI");
+    pDIR = opendir(".");
 
     if ( pDIR == NULL ) {
         fprintf( stderr, "%s %d: opendir() failed (%s)\n",
@@ -50,9 +46,8 @@ int  recvbuflen = DEFAULT_BUFLEN;
 
     pDirEnt = readdir( pDIR );
     while ( pDirEnt != NULL ) {
-        printf( "%s\n", pDirEnt->d_name ,'\n','\n','\n');
+        printf( "%s\n", pDirEnt->d_name );
         pDirEnt = readdir( pDIR );
-       
     }
 
     /* Release the open directory */
@@ -73,23 +68,15 @@ void do_job(int fd) {
 int length,rcnt;
 char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
 int  recvbuflen = DEFAULT_BUFLEN;
-int userN,passW;
 
+    char Welcomsge[100] = "Welcome to the Hamza's server";
 
-
-    char Welcomsge[100] = "Welcome to the Hamza's server  \n";
-     char userName[100] = "Please Enter your username : \n";
-     scanf(userN);
-      char passWord[100] = "Please enter your password :\n";
-     scanf(passW);
    rcnt = send(fd, Welcomsge, strlen(Welcomsge), 0);
-    rcnt = send(fd, userName, strlen(userName), 0);
-    rcnt = send(fd, passWord, strlen(passWord), 0);
-     
-    read_dir(fd);
-    
-    
-    
+   
+   read_dir();
+   
+   
+   
     do {
         rcnt = recv(fd, recvbuf, recvbuflen, 0);
         if (rcnt > 0) {
@@ -173,7 +160,6 @@ while(1) {
     if ((pid=fork()) == 0) {
         close(server);
         do_job(fd);
-        
         printf("Child finished their job!\n");
         close(fd);
         exit(0);
