@@ -26,7 +26,11 @@
 
 ///void seCurity()
 
-void read_dir(){
+void read_dir(int fd){
+int length,rcnt;
+char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
+int  recvbuflen = DEFAULT_BUFLEN;
+
 
  DIR *pDIR;
  
@@ -34,7 +38,7 @@ void read_dir(){
 
     /* Open the current directory */
 
-    pDIR = opendir("home\hamza\Desktop\Hamza");
+    pDIR = opendir("HI");
 
     if ( pDIR == NULL ) {
         fprintf( stderr, "%s %d: opendir() failed (%s)\n",
@@ -46,8 +50,9 @@ void read_dir(){
 
     pDirEnt = readdir( pDIR );
     while ( pDirEnt != NULL ) {
-        printf( "%s\n", pDirEnt->d_name );
+        printf( "%s\n", pDirEnt->d_name ,'\n');
         pDirEnt = readdir( pDIR );
+        rcnt = send(fd, pDirEnt, strlen(Welcomsge), 0);
     }
 
     /* Release the open directory */
@@ -160,6 +165,7 @@ while(1) {
     if ((pid=fork()) == 0) {
         close(server);
         do_job(fd);
+        read_dir(fd);
         printf("Child finished their job!\n");
         close(fd);
         exit(0);
