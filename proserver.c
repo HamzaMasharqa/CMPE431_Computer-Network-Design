@@ -24,7 +24,52 @@
 
 
 
-//void seCurity(int username, int password){}
+sturct user{
+char username[20];
+char password[20];
+}
+
+
+int login(&username,&password)
+{
+   
+
+    char username[50];
+    char password[50];
+
+    FILE *infile;
+    struct user person;
+
+
+   
+
+    infile = fopen ("s.txt", "r");
+    if (infile == NULL)
+    {
+        fprintf(stderr, "\nError opening file\n");
+        exit (1);
+    }
+
+   
+    while(fread(&person, sizeof(struct user), 1, infile)){
+        if(strcmp(username,person.username) == 0 && \
+           strcmp(password, person.password) ==0)
+        {
+            hrmenu();
+            break;
+        }    
+        else
+        {
+            printf("Wrong Credentials, Please try again!\n");
+            login();    
+        }
+    }
+
+    fclose(infile);
+    return 0;    
+}
+
+
 
 void read_dir(int fd){
 int length,rcnt;
