@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Socket API headers */
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -14,15 +12,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* Definations */
 #define DEFAULT_BUFLEN 1024
 #define PORT 2428
-
-
-
-
-
-
 
 sturct user{
 char username[20];
@@ -81,7 +72,6 @@ int  recvbuflen = DEFAULT_BUFLEN;
  
     struct dirent *pDirEnt;
 
-    /* Open the current directory */
 
     pDIR = opendir("HI");
 
@@ -91,7 +81,7 @@ int  recvbuflen = DEFAULT_BUFLEN;
         exit( -1 );
     }
 
-    /* Get each directory entry from pDIR and print its name */
+   
 
     pDirEnt = readdir( pDIR );
     while ( pDirEnt != NULL ) {
@@ -100,27 +90,17 @@ int  recvbuflen = DEFAULT_BUFLEN;
        
     }
 
-    /* Release the open directory */
 
     closedir( pDIR );
 
     return 0;
-
-
-
-
+    
 }
-
-
-
-
 void do_job(int fd) {
 int length,rcnt;
 char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
 int  recvbuflen = DEFAULT_BUFLEN;
 int userN,passW;
-
-
 
     char Welcomsge[100] = "Welcome to the Hamza's server  \n";
      char userName[100] = "Please Enter your username : \n";
@@ -132,9 +112,8 @@ int userN,passW;
     rcnt = send(fd, passWord, strlen(passWord), 0);
      
     read_dir(fd);
-    
-    
-    
+ 
+ 
     do {
         rcnt = recv(fd, recvbuf, recvbuflen, 0);
         if (rcnt > 0) {
@@ -175,8 +154,6 @@ if ((server = socket( AF_INET, SOCK_STREAM, 0)) < 0 ) {
     perror("Can't create socket!");
     return(1);
 }
-
-
 
 memset( &local_addr, 0, sizeof(local_addr) );
 memset( &remote_addr, 0, sizeof(remote_addr) );
