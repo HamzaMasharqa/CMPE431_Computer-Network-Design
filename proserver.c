@@ -15,59 +15,35 @@
 #define DEFAULT_BUFLEN 1024
 #define PORT 2428
 
-sturct user{
-char username[20];
-char password[20];
-}
-
-
-int login(&username,&password)
-{
-   
-
-    char username[50];
-    char password[50];
-
-    FILE *infile;
-    struct user person;
-
-
-   
-
-    infile = fopen ("s.txt", "r");
-    if (infile == NULL)
-    {
-        fprintf(stderr, "\nError opening file\n");
-        exit (1);
-    }
-
-   
-    while(fread(&person, sizeof(struct user), 1, infile)){
-        if(strcmp(username,person.username) == 0 && \
-           strcmp(password, person.password) ==0)
-        {
-            hrmenu();
-            break;
-        }    
-        else
-        {
-            printf("Wrong Credentials, Please try again!\n");
-            login();    
-        }
-    }
-
-    fclose(infile);
-    return 0;    
-}
 
 
 
-void read_dir(int fd){
+
+void do_job(int fd) {
 int length,rcnt;
 char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
 int  recvbuflen = DEFAULT_BUFLEN;
+int userN,passW;
+char command[50];
 
-
+    char Welcomsge[100] = "Welcome to the Hamza's server  \n";
+  //   char userName[100] = "Please Enter your username : \n";
+     
+   //   char passWord[100] = "Please enter your password :\n";
+    
+   rcnt = send(fd, Welcomsge, strlen(Welcomsge), 0);
+    //rcnt = send(fd, userName, strlen(userName), 0);
+  //  rcnt = send(fd, passWord, strlen(passWord), 0);
+    
+    
+    do {
+     rcnt = recv(fd, recvbuf, recvbuflen, 0);
+     
+     printf(recvbuf);
+     
+     if (recvbuf == "ls"){
+     ///////////////////////////////////////////////////////////////////////////////////////////
+  
  DIR *pDIR;
  
     struct dirent *pDirEnt;
@@ -81,38 +57,24 @@ int  recvbuflen = DEFAULT_BUFLEN;
         exit( -1 );
     }
 
-   
+   rcnt = send(fd, "Those are the files in your directory" , strlen("Those are the files in your directory" ), 0);
 
     pDirEnt = readdir( pDIR );
     while ( pDirEnt != NULL ) {
-        printf( "%s\n", pDirEnt->d_name ,'\n','\n','\n');
+    
+    
+    rcnt = send(fd, pDirEnt->d_name , strlen(pDirEnt->d_name ), 0);
+    rcnt = send(fd, "\n" , strlen("\n" ), 0);
+    
+     //   printf( "%s\n", pDirEnt->d_name ,'\n','\n','\n');
         pDirEnt = readdir( pDIR );
        
     }
 
 
     closedir( pDIR );
-
-    return 0;
-    
-}
-void do_job(int fd) {
-int length,rcnt;
-char recvbuf[DEFAULT_BUFLEN],bmsg[DEFAULT_BUFLEN];
-int  recvbuflen = DEFAULT_BUFLEN;
-int userN,passW;
-
-    char Welcomsge[100] = "Welcome to the Hamza's server  \n";
-     char userName[100] = "Please Enter your username : \n";
-     scanf(userN);
-      char passWord[100] = "Please enter your password :\n";
-     scanf(passW);
-   rcnt = send(fd, Welcomsge, strlen(Welcomsge), 0);
-    rcnt = send(fd, userName, strlen(userName), 0);
-    rcnt = send(fd, passWord, strlen(passWord), 0);
-     
-    read_dir(fd);
- 
+}}while (rcnt > 0);
+ //////////////////////////////////////////////////////////////////////////////////////////
  
     do {
         rcnt = recv(fd, recvbuf, recvbuflen, 0);
