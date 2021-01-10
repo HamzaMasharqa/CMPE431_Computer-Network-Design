@@ -25,9 +25,45 @@
 #include <stdlib.h>
 
 //#define ls 5863588
-
+#define MAXCHAR 1000
 #define DEFAULT_BUFLEN 1024
 #define PORT 2428
+
+void fileReader(int fd){
+
+  int length, clin;
+  char clientmsg[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
+  int clientmsglen = DEFAULT_BUFLEN;
+
+ clin = send(fd, "File Name : \n \n \n ", strlen("File Name : \n \n \n "), 0);
+    clin = recv(fd, clientmsg, clientmsglen, 0);
+
+
+ FILE *fp;
+ char* filename =clientmsg;
+    char str[MAXCHAR];
+    
+    
+    
+ 
+    fp = fopen(filename, "r");
+    if (fp == NULL){
+    
+    
+    clin = send(fd, "Could not open file \n\n", strlen("Could not open file \n\n\n"), 0);
+     
+        return 1;
+    }
+    while (fgets(str, MAXCHAR, fp) != NULL)
+     clin = send(fd, "File contents : \n \n \n ", strlen("File contents : \n \n \n "), 0);
+      clin = send(fd, str, strlen(str), 0);
+        printf("%s", str);
+    fclose(fp);
+    return 0;
+
+
+
+}
 
 void readDir(int fd) {
 
@@ -47,7 +83,7 @@ void readDir(int fd) {
     exit(-1);
   }
 
-  clin = send(fd, "Those are the files in your directory", strlen("Those are the files in your directory \n \n "), 0);
+  clin = send(fd, "Those are the files in your directory: \n \n ", strlen("Those are the files in your directory: \n \n "), 0);
 
   pDirEnt = readdir(pDIR);
   while (pDirEnt != NULL) {
@@ -59,7 +95,7 @@ void readDir(int fd) {
     pDirEnt = readdir(pDIR);
 
   }
-
+  clin = send(fd, "\n\n\n", strlen("\n\n\n"), 0);
   closedir(pDIR);
 
 }
@@ -72,6 +108,7 @@ void do_job(int fd) {
   char choise[DEFAULT_BUFLEN];
 
   char Welcomsge[100] = "Welcome to the Hamza's server  \n";
+  
   //   char userName[100] = "Please Enter your username : \n";
 
   //   char passWord[100] = "Please enter your password :\n";
@@ -81,22 +118,23 @@ void do_job(int fd) {
   //  clin = send(fd, passWord, strlen(passWord), 0);
 
   do {
-    clin = send(fd, "please choose one of the commands : \n ", strlen("please choose one of the commands : \n "), 0);
-    clin = recv(fd, clientmsg , clientmsglen, 0);
-    
-      clientmsg[clin] = '\0';
-   
-    
-    if(strcmp(clientmsg,"l\n") == 0 ){
-   
+    clin = send(fd, "please choose one of the commands : \n \n \n ", strlen("please choose one of the commands : \n \n \n "), 0);
+    clin = recv(fd, clientmsg, clientmsglen, 0);
+
+    clientmsg[clin] = '\0';
+
+    if (strcmp(clientmsg, "list\n") == 0) {
+
       readDir(fd);
-}else {
-printf("something wrong");
-}
+    } else if (strcmp(clientmsg, "get\n") == 0){
+    
+    
+    fileReader(fd);
      
-    
-    
-    
+    }else{
+     printf("something wrong");
+    }
+
   } while (clin > 0);
   //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,7 +178,7 @@ int main() {
 
   while (1) {
     length = sizeof remote_addr;
-    if ((fd = accept(server, (struct sockaddr * ) & remote_addr,  &
+    if ((fd = accept(server, (struct sockaddr * ) & remote_addr, &
         length)) == -1) {
       perror("Accept Problem!");
       continue;
