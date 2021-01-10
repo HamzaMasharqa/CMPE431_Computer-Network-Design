@@ -31,9 +31,9 @@
 
 void readDir(int fd) {
 
-  int length, rcnt;
-  char recvbuf[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
-  int recvbuflen = DEFAULT_BUFLEN;
+  int length, clin;
+  char clientmsg[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
+  int clientmsglen = DEFAULT_BUFLEN;
 
   DIR * pDIR;
 
@@ -47,13 +47,13 @@ void readDir(int fd) {
     exit(-1);
   }
 
-  rcnt = send(fd, "Those are the files in your directory", strlen("Those are the files in your directory"), 0);
+  clin = send(fd, "Those are the files in your directory", strlen("Those are the files in your directory \n \n "), 0);
 
   pDirEnt = readdir(pDIR);
   while (pDirEnt != NULL) {
 
-    rcnt = send(fd, pDirEnt -> d_name, strlen(pDirEnt -> d_name), 0);
-    rcnt = send(fd, "\n", strlen("\n"), 0);
+    clin = send(fd, pDirEnt -> d_name, strlen(pDirEnt -> d_name), 0);
+    clin = send(fd, "\n", strlen("\n"), 0);
 
     //   printf( "%s\n", pDirEnt->d_name ,'\n','\n','\n');
     pDirEnt = readdir(pDIR);
@@ -65,9 +65,9 @@ void readDir(int fd) {
 }
 
 void do_job(int fd) {
-  int length, rcnt;
-  char recvbuf[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
-  int recvbuflen = DEFAULT_BUFLEN;
+  int length, clin;
+  char clientmsg[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
+  int clientmsglen = DEFAULT_BUFLEN;
 
   char choise[DEFAULT_BUFLEN];
 
@@ -76,33 +76,28 @@ void do_job(int fd) {
 
   //   char passWord[100] = "Please enter your password :\n";
 
-  rcnt = send(fd, Welcomsge, strlen(Welcomsge), 0);
-  //rcnt = send(fd, userName, strlen(userName), 0);
-  //  rcnt = send(fd, passWord, strlen(passWord), 0);
+  clin = send(fd, Welcomsge, strlen(Welcomsge), 0);
+  //clin = send(fd, userName, strlen(userName), 0);
+  //  clin = send(fd, passWord, strlen(passWord), 0);
 
   do {
-    rcnt = send(fd, "please choose one of the commands : \n ", strlen("please choose one of the commands : \n "), 0);
-    rcnt = recv(fd, recvbuf , recvbuflen, 0);
+    clin = send(fd, "please choose one of the commands : \n ", strlen("please choose one of the commands : \n "), 0);
+    clin = recv(fd, clientmsg , clientmsglen, 0);
     
+      clientmsg[clin] = '\0';
+   
     
-    printf(recvbuf);
-    
-    strcpy(*choise,recvbuf);
-    printf(choise);
-    switch (choise[0]) {
-
-    case 'l':
-
+    if(strcmp(clientmsg,"l\n") == 0 ){
+   
       readDir(fd);
-
-      break;
-
-    default:
-
-      printf("wrong choise");
-
-    }
-  } while (rcnt > 0);
+}else {
+printf("something wrong");
+}
+     
+    
+    
+    
+  } while (clin > 0);
   //////////////////////////////////////////////////////////////////////////////////////////
 
 }
@@ -111,7 +106,7 @@ int main() {
   int server, client;
   struct sockaddr_in local_addr;
   struct sockaddr_in remote_addr;
-  int length, fd, rcnt, optval;
+  int length, fd, clin, optval;
   pid_t pid;
 
   if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
