@@ -25,9 +25,67 @@
 #include <stdlib.h>
 
 //#define ls 5863588
+#define DATA_SIZE 1000
 #define MAXCHAR 1000
 #define DEFAULT_BUFLEN 1024
 #define PORT 2428
+
+
+void fileMaker(int fd){
+ int length, clin;
+  char clientmsg[DEFAULT_BUFLEN],clientfile[DEFAULT_BUFLEN], bmsg[DEFAULT_BUFLEN];
+  int clientmsglen = DEFAULT_BUFLEN;
+
+int clientfilelen = DEFAULT_BUFLEN;
+
+ char data[DATA_SIZE];
+
+    FILE * fPtr;
+    
+    
+     clin = send(fd, "What is the File Name : \n \n \n ", strlen("What is the File Name : \n \n \n "), 0);
+    clin = recv(fd, clientfile, clientfilelen, 0);
+    
+ clin = send(fd, "text inside : \n \n \n ", strlen("text inside: \n \n \n "), 0);
+    clin = recv(fd, clientmsg, clientmsglen, 0);
+    
+    
+    
+    char fopenPath[DEFAULT_BUFLEN] = {clientmsg ,"/",clientfile};
+
+    fPtr = fopen( fopenPath , "w");
+
+
+  
+    if(fPtr == NULL)
+    {
+       
+        printf("Unable to create file.\n");
+        exit(EXIT_FAILURE);
+    }
+
+
+   clin = send(fd, "Enter contents to store in file : \n", strlen("Enter contents to store in file : \n"), 0);
+    
+    clin = recv(fd, clientfile, clientmsglen, 0);
+    
+    fgets(data, DATA_SIZE, stdin)==clientfile;
+
+
+ 
+    fputs(data, fPtr);
+
+
+    
+    fclose(fPtr);
+
+
+   
+    printf("File created and saved successfully. :) \n");
+
+
+
+}
 
 void fileReader(int fd){
 
@@ -40,26 +98,29 @@ void fileReader(int fd){
 
 
  FILE *fp;
+ clientmsg[clin] = '\0';
  char* filename =clientmsg;
+ 
+ 
     char str[MAXCHAR];
     
     
     
  
-    fp = fopen(filename, "r");
-    if (fp == NULL){
+    fp = fopen(clientmsg, "r");
+    if (fp == NULL && strcmp(clientmsg,filename)==0){
     
     
     clin = send(fd, "Could not open file \n\n", strlen("Could not open file \n\n\n"), 0);
      
-        return 1;
+      
     }
     while (fgets(str, MAXCHAR, fp) != NULL)
      clin = send(fd, "File contents : \n \n \n ", strlen("File contents : \n \n \n "), 0);
       clin = send(fd, str, strlen(str), 0);
         printf("%s", str);
     fclose(fp);
-    return 0;
+   
 
 
 
@@ -128,8 +189,12 @@ void do_job(int fd) {
       readDir(fd);
     } else if (strcmp(clientmsg, "get\n") == 0){
     
-    
     fileReader(fd);
+     
+    }else if (strcmp(clientmsg, "put\n") == 0){
+    
+      fileMaker(fd);
+
      
     }else{
      printf("something wrong");
@@ -164,7 +229,7 @@ int main() {
 
   if (bind(server, (struct sockaddr * ) & local_addr, sizeof(local_addr)) < 0) {
 
-    perror("Bind error");
+    perror("Error");
     return (1);
   }
 
@@ -173,7 +238,7 @@ int main() {
     exit(1);
   }
 
-  printf("Concurrent  socket server now starting on port %d\n", PORT);
+  printf("Socket server now starting on port %d\n", PORT);
   printf("Wait for connection\n");
 
   while (1) {
@@ -190,7 +255,7 @@ int main() {
       close(server);
       do_job(fd);
 
-      printf("Child finished their job!\n");
+      printf("User FInished !\n");
       close(fd);
       exit(0);
     }
