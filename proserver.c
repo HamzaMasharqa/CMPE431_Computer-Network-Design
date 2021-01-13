@@ -182,6 +182,9 @@ void do_job(int bs)
 	clin = send(bs, Welcomsge, strlen(Welcomsge), 0);
 	//clin = send(bs, userName, strlen(userName), 0);
 	//  clin = send(bs, passWord, strlen(passWord), 0);
+	
+	
+	
 
 	do {
 		clin = send(bs, "please choose one of the commands : \n \n \n ", strlen("please choose one of the commands : \n \n \n "), 0);
